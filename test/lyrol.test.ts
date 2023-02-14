@@ -1,4 +1,4 @@
-import { Role } from '../src';
+import Role from '../src/Role';
 
 describe('Create role and check permissions', () => {
   const role = new Role([
