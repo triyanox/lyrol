@@ -1,103 +1,210 @@
-# DTS User Guide
+# lyrol - A role management library for node.js
 
-Congrats! You just saved yourself hours of work by bootstrapping this project with DTS. Let’s get you oriented with what’s here and how to use it.
+Lyrol is a simple permission based role management library for node.js. It is designed to be as simple as possible, while still being powerful enough to be useful.
 
-> This DTS setup is meant for developing libraries (not apps!) that can be published to NPM. If you’re looking to build a Node app, you could use `ts-node-dev`, plain `ts-node`, or simple `tsc`.
+## Installation
 
-> If you’re new to TypeScript, checkout [this handy cheatsheet](https://devhints.io/typescript)
-
-## Commands
-
-DTS scaffolds your new library inside `/src`.
-
-To run DTS, use:
+You can install lyrol using npm:
 
 ```bash
-npm start # or yarn start
+npm install lyrol
+```
+or yarn:
+
+```bash
+yarn add lyrol
 ```
 
-This builds to `/dist` and runs the project in watch mode so any edits you save inside `src` causes a rebuild to `/dist`.
+## Basic Usage
 
-To do a one-off build, use `npm run build` or `yarn build`.
+```ts
+import { Role } from 'lyrol';
 
-To run tests, use `npm test` or `yarn test`.
+const role = new Role([
+  {
+    resource: 'user',
+    scopes: 'cr---',
+  },
+  {
+    resource: 'post',
+    scopes: 'crudl',
+  },
+  {
+    resource: 'comment',
+    scopes: 'crudl',
+  },
+]);
 
-## Configuration
-
-Code quality is set up for you with `prettier`, `husky`, and `lint-staged`. Adjust the respective fields in `package.json` accordingly.
-
-### Jest
-
-Jest tests are set up to run with `npm test` or `yarn test`.
-
-### Bundle Analysis
-
-[`size-limit`](https://github.com/ai/size-limit) is set up to calculate the real cost of your library with `npm run size` and visualize the bundle with `npm run analyze`.
-
-#### Setup Files
-
-This is the folder structure we set up for you:
-
-```txt
-/src
-  index.ts        # EDIT THIS
-/test
-  index.test.ts   # EDIT THIS
-.gitignore
-package.json
-README.md         # EDIT THIS
-tsconfig.json
+console.log(role.canCreate('user')); // true
+console.log(role.canRead('user')); // true
+console.log(role.canUpdate('user')); // false
+console.log(role.can('create', 'user')); // true
 ```
 
-### Rollup
+## Extend a role
 
-DTS uses [Rollup](https://rollupjs.org) as a bundler and generates multiple rollup configs for various module formats and build settings. See [Optimizations](#optimizations) for details.
+You can extend a role by using the `extend` method. This will create a new role with the same permissions as the original role, plus any additional permissions you specify.
 
-### TypeScript
+```ts
+import { Role } from 'lyrol';
 
-`tsconfig.json` is set up to interpret `dom` and `esnext` types, as well as `react` for `jsx`. Adjust according to your needs.
+const role = new Role([
+  {
+    resource: 'user',
+    scopes: 'cr---',
+  },
+  {
+    resource: 'post',
+    scopes: 'crudl',
+  },
+  {
+    resource: 'comment',
+    scopes: 'crudl',
+  },
+]);
 
-## Continuous Integration
-
-### GitHub Actions
-
-Two actions are added by default:
-
-- `main` which installs deps w/ cache, lints, tests, and builds on all pushes against a Node and OS matrix
-- `size` which comments cost comparison of your library on every pull request using [`size-limit`](https://github.com/ai/size-limit)
-
-## Optimizations
-
-Please see the main `dts` [optimizations docs](https://github.com/weiran-zsd/dts-cli#optimizations). In particular, know that you can take advantage of development-only optimizations:
-
-```js
-// ./types/index.d.ts
-declare var __DEV__: boolean;
-
-// inside your code...
-if (__DEV__) {
-  console.log('foo');
-}
+const admin = new Role().extend(role).addPermissions([
+  {
+    resource: 'group',
+    scopes: 'crudl',
+  },
+]);
 ```
 
-You can also choose to install and use [invariant](https://github.com/weiran-zsd/dts-cli#invariant) and [warning](https://github.com/weiran-zsd/dts-cli#warning) functions.
+or you can pass an array as a second argument to the `extend` method instead of using the `addPermissions` method.
 
-## Module Formats
+```ts
+import { Role } from 'lyrol';
 
-CJS, ESModules, and UMD module formats are supported.
+const role = new Role([
+  {
+    resource: 'user',
+    scopes: 'cr---',
+  },
+  {
+    resource: 'post',
+    scopes: 'crudl',
+  },
+  {
+    resource: 'comment',
+    scopes: 'crudl',
+  },
+]);
 
-The appropriate paths are configured in `package.json` and `dist/index.js` accordingly. Please report if any issues are found.
+const admin = new Role().extend(role, [
+  {
+    resource: 'group',
+    scopes: 'crudl',
+  },
+]);
+```
 
-## Named Exports
+## Overwrite a permission in extended role
 
-Per Palmer Group guidelines, [always use named exports.](https://github.com/palmerhq/typescript#exports) Code split inside your React app instead of your React library.
+The `extend` method takes optional options as a second parameter. You can use the `overwrite` option to overwrite a permission in the extended role add pass the new permissions as the `permissions` .
 
-## Including Styles
+```ts
+import { Role } from 'lyrol';
 
-There are many ways to ship styles, including with CSS-in-JS. DTS has no opinion on this, configure how you like.
+const role = new Role([
+  {
+    resource: 'user',
+    scopes: 'cr---',
+  },
+  {
+    resource: 'post',
+    scopes: 'crudl',
+  },
+  {
+    resource: 'comment',
+    scopes: 'crudl',
+  },
+]);
 
-For vanilla CSS, you can include it at the root directory and add it to the `files` section in your `package.json`, so that it can be imported separately by your users and run through their bundler's loader.
+const admin = new Role().extend(role, {
+  overwrite: true,
+  permissions: [
+    {
+      resource: 'user',
+      scopes: 'crudl',
+    },
+  ],
+});
 
-## Publishing to NPM
+console.log(admin.canDelete('user')); // true
+```
 
-We recommend using [np](https://github.com/sindresorhus/np).
+## Save the role to a database
+
+You can save the role to a database by using the `toJSON` method. This will return JSON stringified permissions.
+
+```ts
+import { Role } from 'lyrol';
+
+const role = new Role([
+  {
+    resource: 'user',
+    scopes: 'cr---',
+  },
+  {
+    resource: 'post',
+    scopes: 'crudl',
+  },
+  {
+    resource: 'comment',
+    scopes: 'crudl',
+  },
+]);
+
+const permissions = role.toJSON();
+```
+
+or use the `toObject` for a javascript object.
+
+```ts
+import { Role } from 'lyrol';
+
+const role = new Role([
+  {
+    resource: 'user',
+    scopes: 'cr---',
+  },
+  {
+    resource: 'post',
+    scopes: 'crudl',
+  },
+  {
+    resource: 'comment',
+    scopes: 'crudl',
+  },
+]);
+
+const permissions = role.toObject();
+```
+
+or use use the `generate` method and pass the output type as the first argument.
+
+```ts
+import { Role } from 'lyrol';
+
+const role = new Role([
+  {
+    resource: 'user',
+    scopes: 'cr---',
+  },
+  {
+    resource: 'post',
+    scopes: 'crudl',
+  },
+  {
+    resource: 'comment',
+    scopes: 'crudl',
+  },
+]);
+
+const permissions = role.generate('json');
+```
+
+## LICENSE
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
