@@ -2,7 +2,7 @@
   "name": "lyrol",
   "author": "Mohamed Achaq",
   "description": "lyrol is a simple library to manage permissions in your application",
-  "version": "0.7.0",
+  "version": "1.0.0",
   "license": "MIT",
   "keywords": [
     "roles",
