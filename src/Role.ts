@@ -4,6 +4,7 @@ import {
   IRole,
   permission,
   permissions,
+  scopes,
 } from './interfaces';
 
 /**
@@ -188,5 +189,37 @@ export default class Role implements IRole {
 
   public toObject() {
     return this.generate('object') as object;
+  }
+
+  /**
+   * Load a role from a json string
+   * @param json - Json string to load
+   */
+  public static fromJSON(json: string): IRole {
+    const object = JSON.parse(json);
+    return Role.fromObject(object);
+  }
+
+  /**
+   * Load a role from a javascript object
+   * @param object - Object to load
+   */
+  public static fromObject(object: { [key: string]: any }): IRole {
+    const permissions: IPermission[] = [];
+    Object.keys(object).forEach((resource) => {
+      let scopes: string = '';
+      Object.keys(object[resource]).forEach((scope) => {
+        if (object[resource][scope]) {
+          scopes += scope[0];
+        } else {
+          scopes += '-';
+        }
+      });
+      permissions.push({
+        resource,
+        scopes: scopes as scopes,
+      });
+    });
+    return new Role(permissions as IPermission[]);
   }
 }

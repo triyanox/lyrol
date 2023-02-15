@@ -205,6 +205,53 @@ const role = new Role([
 const permissions = role.generate('json');
 ```
 
+## Load the role from a database
+
+You can load the role from your database by using the `fromJSON` or `fromObject` method.
+
+```ts
+import { Role } from 'lyrol';
+
+const role = Role.fromJSON(
+  '{"user":{"create":false,"read":false,"update":false,"delete":false,"list":true},"post":{"create":true,"read":true,"update":true,"delete":true,"list":true},"comment":{"create":true,"read":true,"update":true,"delete":true,"list":true},"page":{"create":true,"read":true,"update":true,"delete":true,"list":true},"picture":{"create":false,"read":false,"update":true,"delete":true,"list":true}}'
+);
+
+role.canCreate('user'); // false
+```
+
+or
+
+```ts
+import { Role } from 'lyrol';
+
+const role = Role.fromObject({
+    user: {
+      create: false,
+      read: false,
+      update: false,
+      delete: false,
+      list: true,
+    },
+    post: { create: true, read: true, update: true, delete: true, list: true },
+    comment: {
+      create: true,
+      read: true,
+      update: true,
+      delete: true,
+      list: true,
+    },
+    page: { create: true, read: true, update: true, delete: true, list: true },
+    picture: {
+      create: false,
+      read: false,
+      update: true,
+      delete: true,
+      list: true,
+    },
+});
+
+role.canCreate('user'); // false
+```
 ## LICENSE
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details

@@ -4,14 +4,19 @@
 type Concat<T extends string, U extends string> = `${T}${U}`;
 
 /**
+ * Scopes type
+ */
+type scopes = Concat<
+  'c' | '-',
+  Concat<'r' | '-', Concat<'u' | '-', Concat<'d' | '-', 'l' | '-'>>>
+>;
+
+/**
  * Permission interface
  */
 interface IPermission {
   resource: string;
-  scopes: Concat<
-    'c' | '-',
-    Concat<'r' | '-', Concat<'u' | '-', Concat<'d' | '-', 'l' | '-'>>>
-  >;
+  scopes: scopes;
 }
 
 /**
@@ -117,4 +122,4 @@ interface IRole {
   toObject(): Object;
 }
 
-export type { IPermission, IRole, permission, permissions, extendOpts };
+export type { IPermission, IRole, permission, permissions, extendOpts, scopes };

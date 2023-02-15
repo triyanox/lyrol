@@ -200,3 +200,101 @@ describe('Check delete permission', () => {
     expect(role.canCreate('user')).toBe(false);
   });
 });
+
+describe('Test load from object', () => {
+  const role = Role.fromObject({
+    user: {
+      create: false,
+      read: false,
+      update: false,
+      delete: false,
+      list: true,
+    },
+    post: { create: true, read: true, update: true, delete: true, list: true },
+    comment: {
+      create: true,
+      read: true,
+      update: true,
+      delete: true,
+      list: true,
+    },
+    page: { create: true, read: true, update: true, delete: true, list: true },
+    picture: {
+      create: false,
+      read: false,
+      update: true,
+      delete: true,
+      list: true,
+    },
+  });
+
+  it('should load from object', () => {
+    expect(role.canCreate('user')).toBe(false);
+    expect(role.canRead('user')).toBe(false);
+    expect(role.canUpdate('user')).toBe(false);
+    expect(role.canDelete('user')).toBe(false);
+    expect(role.canList('user')).toBe(true);
+
+    expect(role.canCreate('post')).toBe(true);
+    expect(role.canRead('post')).toBe(true);
+    expect(role.canUpdate('post')).toBe(true);
+    expect(role.canDelete('post')).toBe(true);
+    expect(role.canList('post')).toBe(true);
+
+    expect(role.canCreate('comment')).toBe(true);
+    expect(role.canRead('comment')).toBe(true);
+    expect(role.canUpdate('comment')).toBe(true);
+    expect(role.canDelete('comment')).toBe(true);
+    expect(role.canList('comment')).toBe(true);
+  });
+});
+
+describe('Test load from object json', () => {
+  const role = Role.fromObject({
+    user: {
+      create: false,
+      read: false,
+      update: false,
+      delete: false,
+      list: true,
+    },
+    post: { create: true, read: true, update: true, delete: true, list: true },
+    comment: {
+      create: true,
+      read: true,
+      update: true,
+      delete: true,
+      list: true,
+    },
+    page: { create: true, read: true, update: true, delete: true, list: true },
+    picture: {
+      create: false,
+      read: false,
+      update: true,
+      delete: true,
+      list: true,
+    },
+  });
+
+  const roleJson = Role.fromJSON(role.toJSON());
+
+  it('should load from object json', () => {
+    expect(roleJson.canCreate('user')).toBe(false);
+    expect(roleJson.canRead('user')).toBe(false);
+    expect(roleJson.canUpdate('user')).toBe(false);
+    expect(roleJson.canDelete('user')).toBe(false);
+    expect(roleJson.canList('user')).toBe(true);
+
+    expect(roleJson.canCreate('post')).toBe(true);
+    expect(roleJson.canRead('post')).toBe(true);
+    expect(roleJson.canUpdate('post')).toBe(true);
+    expect(roleJson.canDelete('post')).toBe(true);
+    expect(roleJson.canList('post')).toBe(true);
+
+    expect(roleJson.canCreate('comment')).toBe(true);
+    expect(roleJson.canRead('comment')).toBe(true);
+    expect(roleJson.canUpdate('comment')).toBe(true);
+    expect(roleJson.canDelete('comment')).toBe(true);
+    expect(roleJson.canList('comment')).toBe(true);
+  });
+});
