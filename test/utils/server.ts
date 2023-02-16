@@ -13,17 +13,6 @@ const role = new Role([
   },
 ]);
 
-const anotherRole = new Role([
-  {
-    resource: 'resource1',
-    scopes: 'crudl',
-  },
-  {
-    resource: 'resource2',
-    scopes: 'crudl',
-  },
-]);
-
 const roleManager = new ExpressRoleManager({
   roles: {
     role1: role,

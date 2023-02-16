@@ -1,4 +1,4 @@
-import { ErrorCodes } from "../interfaces/error.interface";
+import { ErrorCodes } from '../interfaces/error.interface';
 
 /**
  * The error class for the `AuthManager`
