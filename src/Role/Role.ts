@@ -5,7 +5,7 @@ import {
   permission,
   permissions,
   scopes,
-} from './interfaces';
+} from '../interfaces/index';
 
 /**
  * Role class

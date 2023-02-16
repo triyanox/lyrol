@@ -1,23 +1,23 @@
-import { AuthError, AuthManager } from './@auth/index';
-import { ExpressRoleManager } from './@express/index';
 import {
-  ErrorCodes,
-  extendOpts,
   IAuthManager,
   IAuthManagerOptions,
   IAutorizeOptions,
+} from './auth.interface';
+import { ErrorCodes } from './error.interface';
+import {
   IExpressAutorizeOptions,
   IExpressRoleManager,
   IExpressRoleManagerOptions,
+} from './express.auth.interface';
+import {
+  extendOpts,
   IPermission,
   IRole,
   permission,
   permissions,
   scopes,
-} from './interfaces/index';
-import Role from './Role/Role';
+} from './role.interface';
 
-export { Role, AuthManager, AuthError, ExpressRoleManager };
 export type {
   IAuthManager,
   IAuthManagerOptions,
