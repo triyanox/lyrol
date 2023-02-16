@@ -15,7 +15,9 @@ or yarn:
 yarn add lyrol
 ```
 
-## Basic Usage
+## Create Roles
+
+### Basic Usage
 
 ```ts
 import { Role } from 'lyrol';
@@ -41,7 +43,7 @@ console.log(role.canUpdate('user')); // false
 console.log(role.can('create', 'user')); // true
 ```
 
-## Extend a role
+### Extend a role
 
 You can extend a role by using the `extend` method. This will create a new role with the same permissions as the original role, plus any additional permissions you specify.
 
@@ -99,7 +101,7 @@ const admin = new Role().extend(role, [
 ]);
 ```
 
-## Overwrite a permission in extended role
+### Overwrite a permission in extended role
 
 The `extend` method takes optional options as a second parameter. You can use the `overwrite` option to overwrite a permission in the extended role add pass the new permissions as the `permissions` .
 
@@ -134,7 +136,7 @@ const admin = new Role().extend(role, {
 console.log(admin.canDelete('user')); // true
 ```
 
-## Save the role to a database
+### Save the role to a database
 
 You can save the role to a database by using the `toJSON` method. This will return JSON stringified permissions.
 
@@ -205,7 +207,7 @@ const role = new Role([
 const permissions = role.generate('json');
 ```
 
-## Load the role from a database
+### Load the role from a database
 
 You can load the role from your database by using the `fromJSON` or `fromObject` method.
 
@@ -251,6 +253,88 @@ const role = Role.fromObject({
 });
 
 role.canCreate('user'); // false
+```
+
+## Authorize a user
+
+### Express Middleware
+
+You can create a new instance of the `ExpressRoleManager` class and use the `authorize` method to authorize a user.
+
+```ts
+import { ExpressRoleManager, Role } from 'lyrol';
+import express from 'express';
+
+const app = express();
+
+const user = new Role([
+  {
+    resource: 'post',
+    scopes: 'crudl',
+  },
+  {
+    resource: 'comment',
+    scopes: 'crudl',
+  },
+]);
+
+const roleManager = new ExpressRoleManager({
+  roles: {
+    user,
+  },
+  resources: ['post', 'comment'],
+});
+
+interface IAuthRequest {
+  role: string;
+  permissions: any;
+}
+
+app.get(
+  '/comment',
+  (req, res, next) => {
+    (req as unknown as IAuthRequest).role = 'role1';
+    next();
+  },
+  roleManager.authorize({
+    resource: 'comment',
+    action: ['read', 'list'],
+  }),
+  (req, res) => {
+    res.send('Hello World!');
+  }
+);
+
+app.listen(3000, () => {
+  console.log('Example app listening on port 3000!');
+});
+```
+The `authorize` method takes multiple options as a parameter.
+
+- `resource` - The resource to be accessed. Can be a string or an array of strings.
+- `action` - The action to authorize. Can be a string or an array of strings.
+- `roleKey` - The key of the role in the request object. Default is `role`.
+- `usePermissionKey` - It's a boolean value. If set to `true` the `authorize` with create a role from the permissions in the request object. Default is `false`.
+- permissionKey - The key of the permissions in the request object. Default is `permissions`.
+- `loose` - It's a boolean value. If set to `true` the `authorize` method will authorize the user if the user has any of the actions. Default is `false`.
+
+You can pass a custom error handler and success handler to the instance of the `ExpressRoleManager` class.
+
+```ts
+import { ExpressRoleManager, Role } from 'lyrol';
+
+const roleManager = new ExpressRoleManager({
+  roles: {
+    user,
+  },
+  resources: ['post', 'comment'],
+  onError: (err, req, res, next) => {
+    res.status(403).send('Forbidden');
+  },
+  onSucess: (req, res, next) => {
+    res.send('Hello World!');
+  },
+});
 ```
 ## LICENSE
 
