@@ -2,7 +2,7 @@
   "name": "lyrol",
   "author": "Mohamed Achaq",
   "description": "lyrol is a simple library to manage permissions in your application",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "license": "MIT",
   "keywords": [
     "roles",
@@ -73,7 +73,5 @@
     "tslib": "^2.5.0",
     "typescript": "^4.9.5"
   },
-  "dependencies": {
-    "tsyringe": "^4.7.0"
-  }
+  "dependencies": {}
 }
