@@ -1,8 +1,8 @@
 {
   "name": "lyrol",
   "author": "Mohamed Achaq",
-  "description": "lyrol is a simple library to manage permissions in your application",
-  "version": "2.2.0",
+  "description": "lyrol is fully featured role management library for node.js. It allows you to easily create roles and manage permissions and authorize your users, and it supports various frameworks like express, koa and next.js",
+  "version": "2.3.0",
   "license": "MIT",
   "keywords": [
     "roles",
@@ -15,7 +15,10 @@
     "koa role management",
     "role management",
     "koa middleware",
-    "express middleware"
+    "express middleware",
+    "next.js middleware",
+    "next.js role management",
+    "next.js permissions"
   ],
   "repository": {
     "type": "git",
@@ -76,6 +79,7 @@
     "husky": "^8.0.3",
     "koa": "^2.14.1",
     "koa-router": "^12.0.0",
+    "next": "^13.1.6",
     "pino": "^8.10.0",
     "size-limit": "^8.2.4",
     "supertest": "^6.3.3",

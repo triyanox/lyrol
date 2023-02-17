@@ -1,0 +1,42 @@
+import { createServer } from 'http';
+import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
+import { apiResolver } from 'next/dist/server/api-utils/node';
+import request from 'supertest';
+import { NextRoleManager, Role } from '../../src';
+
+const nextServer = (handler: NextApiHandler) => {
+  const server = createServer((req, res) => {
+    apiResolver(req, res, undefined, handler, {} as any, false);
+  });
+  return request(server);
+};
+
+const role = new Role([
+  {
+    resource: 'resource1',
+    scopes: 'crudl',
+  },
+  {
+    resource: 'resource2',
+    scopes: 'cr-dl',
+  },
+]);
+
+const roleManager = new NextRoleManager({
+  roles: {
+    role1: role,
+  },
+  resources: ['resource1', 'resource2'],
+  onError(err, req, res) {
+    res.status(403).send('Forbidden');
+  },
+});
+
+const authWrapper = (handler: NextApiHandler) => {
+  return (req: NextApiRequest, res: NextApiResponse) => {
+    (req as any).role = 'role1';
+    handler(req, res);
+  };
+};
+
+export { nextServer, roleManager, authWrapper };

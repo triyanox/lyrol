@@ -1,4 +1,4 @@
-import { Context, Next } from 'koa';
+import { NextApiHandler, NextApiRequest, NextApiResponse } from 'next';
 import { AuthError } from '../index';
 import { IAuthManager } from './auth.interface';
 import { IRole, permission } from './role.interface';
@@ -6,7 +6,7 @@ import { IRole, permission } from './role.interface';
 /**
  * The interface for the `authorize` function
  */
-interface IKoaAutorizeOptions {
+interface INextAutorizeOptions {
   /**
    * The key that is used to get the role from the request object
    * @default 'role'
@@ -22,7 +22,6 @@ interface IKoaAutorizeOptions {
   resource: string | string[];
   /**
    * If the permissions are used from the request object
-   * @default false
    */
   usePermissionKey?: boolean;
   /**
@@ -38,24 +37,35 @@ interface IKoaAutorizeOptions {
 }
 
 /**
- * The interface for the `KoaRoleManager` class
+ * The interface for the `NextRoleManager` class
  * @extends IAuthManager
  */
-interface IKoaRoleManager extends IAuthManager {
+interface INextRoleManager extends IAuthManager {
   /**
    * The function that is used to authorize a request
+   * This function takes some options as first argument and a `NextApiHandler` as second argument
+   * @param options The options for authorization
    */
   authorize: (
-    options: IKoaAutorizeOptions
-  ) => (ctx: Context, next: Next) => Promise<void>;
-  onError?: (err: AuthError, ctx: Context, next: Next) => Promise<void> | void;
-  onSucess?: (ctx: Context, next: Next) => Promise<void> | void;
+    options: INextAutorizeOptions,
+    handler: NextApiHandler
+  ) => NextApiHandler;
+  onError?: (
+    err: AuthError,
+    req: NextApiRequest,
+    res: NextApiResponse
+  ) => Promise<void> | void;
+  onSucess?: (
+    req: NextApiRequest,
+    res: NextApiResponse
+  ) => Promise<void> | void;
 }
 
 /**
- * The options for the `KoaRoleManager` class
+ * The options for the `NextRoleManager` class
+ * @extends IAuthManagerOptions
  */
-interface IKoaRoleManagerOptions {
+interface INextRoleManagerOptions {
   /**
    * The roles that are used for authorization
    */
@@ -68,11 +78,18 @@ interface IKoaRoleManagerOptions {
   /**
    * The function that is called when an error occurs
    */
-  onError?: (err: AuthError, ctx: Context, next: Next) => Promise<void> | void;
+  onError?: (
+    err: AuthError,
+    req: NextApiRequest,
+    res: NextApiResponse
+  ) => Promise<void> | void;
   /**
-   * The function that is called when the authorization is successful
+   * The function that is called when the request is authorized
    */
-  onSucess?: (ctx: Context, next: Next) => Promise<void> | void;
+  onSucess?: (
+    req: NextApiRequest,
+    res: NextApiResponse
+  ) => Promise<void> | void;
 }
 
-export type { IKoaAutorizeOptions, IKoaRoleManager, IKoaRoleManagerOptions };
+export type { INextRoleManager, INextRoleManagerOptions, INextAutorizeOptions };

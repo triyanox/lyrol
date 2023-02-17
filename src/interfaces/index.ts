@@ -15,6 +15,11 @@ import {
   IKoaRoleManagerOptions,
 } from './koa.auth.interface';
 import {
+  INextAutorizeOptions,
+  INextRoleManager,
+  INextRoleManagerOptions,
+} from './next.auth.interface';
+import {
   extendOpts,
   IPermission,
   IRole,
@@ -22,6 +27,7 @@ import {
   permissions,
   scopes,
 } from './role.interface';
+
 export type {
   IAuthManager,
   IAuthManagerOptions,
@@ -39,4 +45,7 @@ export type {
   IKoaRoleManager,
   IKoaRoleManagerOptions,
   IKoaAutorizeOptions,
+  INextRoleManager,
+  INextRoleManagerOptions,
+  INextAutorizeOptions,
 };

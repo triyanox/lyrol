@@ -1,6 +1,7 @@
 # lyrol - A role management library for node.js
 
-Lyrol is a simple permission based role management library for node.js. It is designed to be as simple as possible, while still being powerful enough to be useful.
+Lyrol is fully featured role management library for node.js. It allows you to easily create roles and manage permissions and authorize your users, and it supports various frameworks like
+`express`, `koa` and `next.js`.
 
 ## Installation
 
@@ -402,6 +403,57 @@ app.listen(3000, () => {
 });
 ```
 The `authorize` method takes the same options as the `authorize` method of the `ExpressRoleManager` class.
+
+### Next.js Middleware
+
+You can create a new instance of the `NextRoleManager` class and use the `authorize` method to authorize a user.
+
+```ts
+import { NextRoleManager, Role } from 'lyrol';
+import { NextApiRequest, NextApiResponse, NextApiHandler } from 'next';
+
+const user = new Role([
+  {
+    resource: 'post',
+    scopes: 'crudl',
+  },
+  {
+    resource: 'comment',
+    scopes: 'crudl',
+  },
+]);
+
+const roleManager = new NextRoleManager({
+  roles: {
+    user,
+  },
+  resources: ['post', 'comment'],
+  onError: (err, req, res, next) => {
+    res.status(403).send('Forbidden');
+  },
+});
+
+
+// handles authentification
+const withAuth = (handler: NextApiHandler) => {
+   return (req: NextApiRequest, res: NextApiResponse) => {
+    (req as any).role = 'user';
+    handler(req, res);
+  };
+}
+
+const handler = roleManager.authorize(
+  {
+    resource: 'comment',
+    action: ['create', 'update'],
+  },
+  (req, res) => {
+    res.status(200).send('Hello World!');
+  }
+);
+
+export default withAuth(handler);
+```
 
 ## LICENSE
 
