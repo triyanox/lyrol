@@ -10,6 +10,11 @@ import {
   IExpressRoleManagerOptions,
 } from './express.auth.interface';
 import {
+  IKoaAutorizeOptions,
+  IKoaRoleManager,
+  IKoaRoleManagerOptions,
+} from './koa.auth.interface';
+import {
   extendOpts,
   IPermission,
   IRole,
@@ -17,7 +22,6 @@ import {
   permissions,
   scopes,
 } from './role.interface';
-
 export type {
   IAuthManager,
   IAuthManagerOptions,
@@ -32,4 +36,7 @@ export type {
   IExpressRoleManager,
   IExpressRoleManagerOptions,
   IExpressAutorizeOptions,
+  IKoaRoleManager,
+  IKoaRoleManagerOptions,
+  IKoaAutorizeOptions,
 };

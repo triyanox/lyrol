@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Context, Next } from 'koa';
 import { AuthError } from '../index';
 import { IAuthManager } from './auth.interface';
 import { IRole, permission } from './role.interface';
@@ -6,7 +6,7 @@ import { IRole, permission } from './role.interface';
 /**
  * The interface for the `authorize` function
  */
-interface IExpressAutorizeOptions {
+interface IKoaAutorizeOptions {
   /**
    * The key that is used to get the role from the request object
    * @default 'role'
@@ -38,38 +38,27 @@ interface IExpressAutorizeOptions {
 }
 
 /**
- * The interface for the `ExpressRoleManager` class
+ * The interface for the `KoaRoleManager` class
  * @extends IAuthManager
  */
-interface IExpressRoleManager extends IAuthManager {
+interface IKoaRoleManager extends IAuthManager {
   /**
    * The function that is used to authorize a request
    */
   authorize: (
-    options: IExpressAutorizeOptions
-  ) => (req: Request, res: Response, next: NextFunction) => void;
-  /**
-   * The function that is called when an error occurs
-   */
-  onError?: (
-    err: AuthError,
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => void;
-  /**
-   * The function that is called when the authorization is successful
-   */
-  onSucess?: (req: Request, res: Response, next: NextFunction) => void;
+    options: IKoaAutorizeOptions
+  ) => (ctx: Context, next: Next) => Promise<void>;
+  onError?: (err: AuthError, ctx: Context, next: Next) => Promise<void> | void;
+  onSucess?: (ctx: Context, next: Next) => Promise<void> | void;
 }
 
 /**
- * The options for the `ExpressRoleManager` class
+ * The options for the `KoaRoleManager` class
  */
-interface IExpressRoleManagerOptions {
+interface IKoaRoleManagerOptions {
   /**
-   * The roles that are available to the `ExpressRoleManager` instance
-   * @default {}
+   * The roles that are used for authorization
+   * @default []
    */
   roles: { [key: string]: IRole };
   /**
@@ -80,20 +69,11 @@ interface IExpressRoleManagerOptions {
   /**
    * The function that is called when an error occurs
    */
-  onError?: (
-    err: AuthError,
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ) => void;
+  onError?: (err: AuthError, ctx: Context, next: Next) => Promise<void> | void;
   /**
    * The function that is called when the authorization is successful
    */
-  onSucess?: (req: Request, res: Response, next: NextFunction) => void;
+  onSucess?: (ctx: Context, next: Next) => Promise<void> | void;
 }
 
-export type {
-  IExpressRoleManager,
-  IExpressRoleManagerOptions,
-  IExpressAutorizeOptions,
-};
+export type { IKoaAutorizeOptions, IKoaRoleManager, IKoaRoleManagerOptions };

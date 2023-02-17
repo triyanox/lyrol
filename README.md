@@ -315,7 +315,7 @@ The `authorize` method takes multiple options as a parameter.
 - `action` - The action to authorize. Can be a string or an array of strings.
 - `roleKey` - The key of the role in the request object. Default is `role`.
 - `usePermissionKey` - It's a boolean value. If set to `true` the `authorize` with create a role from the permissions in the request object. Default is `false`.
-- permissionKey - The key of the permissions in the request object. Default is `permissions`.
+- `permissionKey` - The key of the permissions in the request object. Default is `permissions`.
 - `loose` - It's a boolean value. If set to `true` the `authorize` method will authorize the user if the user has any of the actions. Default is `false`.
 
 You can pass a custom error handler and success handler to the instance of the `ExpressRoleManager` class.
@@ -336,6 +336,73 @@ const roleManager = new ExpressRoleManager({
   },
 });
 ```
+
+### Koa Middleware
+
+You can create a new instance of the `KoaRoleManager` class and use the `authorize` method to authorize a user.
+
+```ts
+import { KoaRoleManager, Role } from 'lyrol';
+import Koa from 'koa';
+import Router from 'koa-router';
+
+const app = new Koa();
+
+const user = new Role([
+  {
+    resource: 'post',
+    scopes: 'crudl',
+  },
+  {
+    resource: 'comment',
+    scopes: 'crudl',
+  },
+]);
+
+const roleManager = new KoaRoleManager({
+  roles: {
+    user,
+  },
+  resources: ['post', 'comment'],
+  onError: (err, ctx, next) => {
+    ctx.status = 403;
+    ctx.body = 'Forbidden';
+  },
+  onSucess: (ctx, next) => {
+    ctx.body = 'Hello World!';
+  },
+});
+
+interface IAuthCtx {
+  role: string;
+  permissions: any;
+}
+
+const router = new Router();
+
+router.get(
+  '/comment',
+  async (ctx, next) => {
+    (ctx as unknown as IAuthCtx).role = 'role1';
+    await next();
+  },
+  roleManager.authorize({
+    resource: 'comment',
+    action: ['read', 'list'],
+  }),
+  async (ctx) => {
+    ctx.body = 'Hello World!';
+  }
+);
+
+app.use(router.routes());
+
+app.listen(3000, () => {
+  console.log('Example app listening on port 3000!');
+});
+```
+The `authorize` method takes the same options as the `authorize` method of the `ExpressRoleManager` class.
+
 ## LICENSE
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details

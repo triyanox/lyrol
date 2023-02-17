@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import AuthManager from '../@auth/auth';
-import { AuthError } from '../index';
+import { AuthError, AuthManager } from '../index';
 import {
   IExpressAutorizeOptions,
   IExpressRoleManager,
