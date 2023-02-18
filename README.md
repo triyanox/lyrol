@@ -1,7 +1,7 @@
 # lyrol - A role management library for node.js
 
 <p align="center">
-  <img src="assets/lyrol.png" alt="lyrol" width="200" />
+  <img src="logo.png" alt="lyrol" width="200" />
 </p>
 
 [![Rate this package](https://badges.openbase.com/js/rating/lyrol.svg?style=openbase&token=FjWdZk+GM9XSAbnKGtvMPP4+B452l84xBXsBZnQFHxw=)](https://openbase.com/js/lyrol?utm_source=embedded&amp;utm_medium=badge&amp;utm_campaign=rate-badge)
