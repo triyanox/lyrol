@@ -452,7 +452,7 @@ const roleManager = new NextRoleManager({
     user,
   },
   resources: ['post', 'comment'],
-  onError: (err, req, res, next) => {
+  onError: (err, req, res) => {
     res.status(403).send('Forbidden');
   },
 });
