@@ -1,9 +1,31 @@
 # lyrol - A role management library for node.js
 
+<p align="center">
+  <img src="assets/lyrol.png" alt="lyrol" width="200" />
+</p>
+
 [![Rate this package](https://badges.openbase.com/js/rating/lyrol.svg?style=openbase&token=FjWdZk+GM9XSAbnKGtvMPP4+B452l84xBXsBZnQFHxw=)](https://openbase.com/js/lyrol?utm_source=embedded&amp;utm_medium=badge&amp;utm_campaign=rate-badge)
 
 Lyrol is fully featured role management library for node.js. It allows you to easily create roles and manage permissions and authorize your users, and it supports various frameworks like
 `express`, `koa` and `next.js`.
+
+## Table of Contents
+
+- [lyrol - A role management library for node.js](#lyrol---a-role-management-library-for-nodejs)
+  - [Table of Contents](#table-of-contents)
+  - [Installation](#installation)
+  - [Create Roles](#create-roles)
+    - [Basic Usage](#basic-usage)
+    - [Extend a role](#extend-a-role)
+    - [Overwrite a permission in extended role](#overwrite-a-permission-in-extended-role)
+    - [Save the role to a database](#save-the-role-to-a-database)
+    - [Load the role from a database](#load-the-role-from-a-database)
+  - [Authorize a user](#authorize-a-user)
+    - [Express Middleware](#express-middleware)
+    - [Koa Middleware](#koa-middleware)
+    - [Next.js Middleware](#nextjs-middleware)
+  - [LICENSE](#license)
+
 
 ## Installation
 
