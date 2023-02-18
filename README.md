@@ -1,5 +1,7 @@
 # lyrol - A role management library for node.js
 
+[![Rate this package](https://badges.openbase.com/js/rating/lyrol.svg?style=openbase&token=FjWdZk+GM9XSAbnKGtvMPP4+B452l84xBXsBZnQFHxw=)](https://openbase.com/js/lyrol?utm_source=embedded&amp;utm_medium=badge&amp;utm_campaign=rate-badge)
+
 Lyrol is fully featured role management library for node.js. It allows you to easily create roles and manage permissions and authorize your users, and it supports various frameworks like
 `express`, `koa` and `next.js`.
 
