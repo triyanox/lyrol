@@ -1,8 +1,9 @@
+import { NextApiRequest } from 'next';
 import { authWrapper, nextServer, roleManager } from './utils/next.server';
 
 describe('NextRoleManager', () => {
   it('should return 403 when role is not authorized', async () => {
-    const handler = roleManager.authorize(
+    const handler = roleManager.authorize<NextApiRequest & { role: string }>(
       {
         resource: 'resource2',
         action: ['create', 'update'],
@@ -12,7 +13,9 @@ describe('NextRoleManager', () => {
       }
     );
 
-    const res = await nextServer(authWrapper(handler)).get('/resource2');
+    const res = await nextServer(
+      authWrapper<NextApiRequest & { role: string }>(handler) as any
+    ).get('/resource2');
     expect(res.status).toBe(403);
     expect(res.text).toBe('Forbidden');
   });

@@ -7,13 +7,17 @@ import {
 } from '../interfaces/index';
 
 class ExpressRoleManager extends AuthManager implements IExpressRoleManager {
-  onError?: (
+  onError?: <T extends Request>(
     err: AuthError,
-    req: Request,
+    req: T,
     res: Response,
     next: NextFunction
   ) => void;
-  onSucess?: (req: Request, res: Response, next: NextFunction) => void;
+  onSucess?: <T extends Request>(
+    req: T,
+    res: Response,
+    next: NextFunction
+  ) => void;
 
   constructor(options: IExpressRoleManagerOptions) {
     super(options);
@@ -37,8 +41,10 @@ class ExpressRoleManager extends AuthManager implements IExpressRoleManager {
     return permissions;
   }
 
-  authorize(options: IExpressAutorizeOptions) {
-    return (req: Request, res: Response, next: NextFunction) => {
+  authorize<T extends Request>(
+    options: IExpressAutorizeOptions
+  ): (req: T, res: Response, next: NextFunction) => void {
+    return (req: T, res: Response, next: NextFunction) => {
       try {
         let authorized = false;
         if (!options.usePermissionKey) {
@@ -64,20 +70,16 @@ class ExpressRoleManager extends AuthManager implements IExpressRoleManager {
         }
         if (authorized) {
           if (this.onSucess) {
-            this.onSucess(req, res, next);
+            this.onSucess<T>(req, res, next);
           } else {
             next();
           }
         } else {
-          if (this.onError) {
-            this.onError(AuthError.throw_error('UNAUTHORIZED'), req, res, next);
-          } else {
-            next(AuthError.throw_error('UNAUTHORIZED'));
-          }
+          throw AuthError.throw_error('UNAUTHORIZED');
         }
       } catch (error: any) {
         if (this.onError) {
-          this.onError(error, req, res, next);
+          this.onError<T>(error, req, res, next);
         } else {
           next(error);
         }

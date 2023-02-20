@@ -7,8 +7,12 @@ import {
 } from '../interfaces/index';
 
 class KoaRoleManager extends AuthManager implements IKoaRoleManager {
-  onError?: (err: AuthError, ctx: Context, next: Next) => Promise<void> | void;
-  onSucess?: (ctx: Context, next: Next) => Promise<void> | void;
+  onError?: <T extends Context>(
+    err: AuthError,
+    ctx: T,
+    next: Next
+  ) => Promise<void> | void;
+  onSucess?: <T extends Context>(ctx: T, next: Next) => Promise<void> | void;
 
   constructor(options: IKoaRoleManagerOptions) {
     super(options);
@@ -32,8 +36,10 @@ class KoaRoleManager extends AuthManager implements IKoaRoleManager {
     return permissions;
   }
 
-  authorize(options: IKoaAutorizeOptions) {
-    return async (ctx: Context, next: Next) => {
+  authorize<T extends Context>(
+    options: IKoaAutorizeOptions
+  ): (ctx: T, next: Next) => Promise<void> | void {
+    return async (ctx: T, next: Next) => {
       try {
         let authorized = false;
         if (!options.usePermissionKey) {
@@ -61,13 +67,13 @@ class KoaRoleManager extends AuthManager implements IKoaRoleManager {
           throw AuthError.throw_error('UNAUTHORIZED');
         }
         if (this.onSucess) {
-          this.onSucess(ctx, next);
+          this.onSucess<T>(ctx, next);
         } else {
           await next();
         }
       } catch (err: any) {
         if (this.onError) {
-          this.onError(err, ctx, next);
+          this.onError<T>(err, ctx, next);
         } else {
           throw err;
         }

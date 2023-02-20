@@ -1,4 +1,4 @@
-import Koa, { Context } from 'koa';
+import Koa, { Context, Next } from 'koa';
 import Router from 'koa-router';
 import request from 'supertest';
 import { KoaRoleManager, Role } from '../../src/index';
@@ -30,20 +30,27 @@ const app = new Koa();
 
 const router = new Router();
 
-interface IAuthCtx extends Context {
+type IAuthCtx = Context & {
   role: string;
-}
+};
+
+const authWrapper = <T extends Context>(
+  handler: (ctx: T, next: Next) => Promise<void> | void
+) => {
+  return (ctx: T, next: Next) => {
+    (ctx as unknown as IAuthCtx).role = 'role1';
+    handler(ctx, next);
+  };
+};
 
 router.get(
   '/resource1',
-  (ctx, next) => {
-    (ctx as unknown as IAuthCtx).role = 'role1';
-    next();
-  },
-  roleManager.authorize({
-    resource: 'resource1',
-    action: ['create', 'update'],
-  }),
+  authWrapper(
+    roleManager.authorize<IAuthCtx>({
+      resource: 'resource1',
+      action: ['create', 'update'],
+    })
+  ),
   (ctx) => {
     ctx.body = 'Hello World!';
   }

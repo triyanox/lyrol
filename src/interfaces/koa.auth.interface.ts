@@ -45,11 +45,15 @@ interface IKoaRoleManager extends IAuthManager {
   /**
    * The function that is used to authorize a request
    */
-  authorize: (
+  authorize: <T extends Context>(
     options: IKoaAutorizeOptions
-  ) => (ctx: Context, next: Next) => Promise<void>;
-  onError?: (err: AuthError, ctx: Context, next: Next) => Promise<void> | void;
-  onSucess?: (ctx: Context, next: Next) => Promise<void> | void;
+  ) => (ctx: T, next: Next) => Promise<void> | void;
+  onError?: <T extends Context>(
+    err: AuthError,
+    ctx: T,
+    next: Next
+  ) => Promise<void> | void;
+  onSucess?: <T extends Context>(ctx: T, next: Next) => Promise<void> | void;
 }
 
 /**
@@ -68,11 +72,15 @@ interface IKoaRoleManagerOptions {
   /**
    * The function that is called when an error occurs
    */
-  onError?: (err: AuthError, ctx: Context, next: Next) => Promise<void> | void;
+  onError?: <T extends Context>(
+    err: AuthError,
+    ctx: T,
+    next: Next
+  ) => Promise<void> | void;
   /**
    * The function that is called when the authorization is successful
    */
-  onSucess?: (ctx: Context, next: Next) => Promise<void> | void;
+  onSucess?: <T extends Context>(ctx: T, next: Next) => Promise<void> | void;
 }
 
 export type { IKoaAutorizeOptions, IKoaRoleManager, IKoaRoleManagerOptions };

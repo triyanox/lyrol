@@ -32,8 +32,10 @@ const roleManager = new NextRoleManager({
   },
 });
 
-const authWrapper = (handler: NextApiHandler) => {
-  return (req: NextApiRequest, res: NextApiResponse) => {
+const authWrapper = <T extends NextApiRequest>(
+  handler: (req: T, res: NextApiResponse) => Promise<void> | void
+) => {
+  return (req: T, res: NextApiResponse) => {
     (req as any).role = 'role1';
     handler(req, res);
   };

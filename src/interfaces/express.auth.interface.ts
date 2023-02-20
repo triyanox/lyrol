@@ -4,6 +4,21 @@ import { IAuthManager } from './auth.interface';
 import { IRole, permission } from './role.interface';
 
 /**
+ * We used declaration merging to add the `role` and `permissions` keys to the `Request` interface
+ * @see https://www.typescriptlang.org/docs/handbook/declaration-merging.html
+ * ***********************************************************************************************
+ * you can use this to add the keys to the `Request` interface
+ */
+declare global {
+  namespace Express {
+    interface Request {
+      role: string;
+      permissions: any;
+    }
+  }
+}
+
+/**
  * The interface for the `authorize` function
  */
 interface IExpressAutorizeOptions {
@@ -44,23 +59,32 @@ interface IExpressAutorizeOptions {
 interface IExpressRoleManager extends IAuthManager {
   /**
    * The function that is used to authorize a request
+   * ***********************************************************************************************
+   * We used declaration merging to add the `role` and `permissions` keys to the `Request` interface
+   * @see https://www.typescriptlang.org/docs/handbook/declaration-merging.html
+   * ***********************************************************************************************
+   * you can use this to add the keys to the `Request` interface
    */
-  authorize: (
+  authorize: <T extends Request>(
     options: IExpressAutorizeOptions
-  ) => (req: Request, res: Response, next: NextFunction) => void;
+  ) => (req: T, res: Response, next: NextFunction) => void;
   /**
    * The function that is called when an error occurs
    */
-  onError?: (
+  onError?: <T extends Request>(
     err: AuthError,
-    req: Request,
+    req: T,
     res: Response,
     next: NextFunction
   ) => void;
   /**
    * The function that is called when the authorization is successful
    */
-  onSucess?: (req: Request, res: Response, next: NextFunction) => void;
+  onSucess?: <T extends Request>(
+    req: T,
+    res: Response,
+    next: NextFunction
+  ) => void;
 }
 
 /**
@@ -80,16 +104,20 @@ interface IExpressRoleManagerOptions {
   /**
    * The function that is called when an error occurs
    */
-  onError?: (
+  onError?: <T extends Request>(
     err: AuthError,
-    req: Request,
+    req: T,
     res: Response,
     next: NextFunction
   ) => void;
   /**
    * The function that is called when the authorization is successful
    */
-  onSucess?: (req: Request, res: Response, next: NextFunction) => void;
+  onSucess?: <T extends Request>(
+    req: T,
+    res: Response,
+    next: NextFunction
+  ) => void;
 }
 
 export type {

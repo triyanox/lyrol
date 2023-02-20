@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request } from 'express';
 import request from 'supertest';
 import { ExpressRoleManager, Role } from '../../src/index';
 
@@ -27,18 +27,19 @@ const roleManager = new ExpressRoleManager({
 });
 
 const app = express();
-interface IAuthRequest {
+
+type IAuthRequest = Request & {
   role: string;
   permissions: any;
-}
+};
 
 app.get(
   '/resource1',
   (req, res, next) => {
-    (req as unknown as IAuthRequest).role = 'role1';
+    req.role = 'role1';
     next();
   },
-  roleManager.authorize({
+  roleManager.authorize<IAuthRequest>({
     resource: 'resource1',
     action: ['create', 'update'],
   }),
