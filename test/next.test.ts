@@ -37,4 +37,25 @@ describe('NextRoleManager', () => {
     expect(res.status).toBe(200);
     expect(res.text).toBe('Hello World!');
   });
+
+  it('should return 200 when role is authorized', async () => {
+    const handler = roleManager.authorize(
+      {
+        resource: 'resource1',
+        action: ['create', 'update'],
+        permissionsKey: 'permissions',
+        usePermissionKey: true,
+        roleKey: 'role',
+      },
+      (req, res) => {
+        res.status(200).send('Hello World!');
+      }
+    );
+
+    const res = await nextServer(authWrapper(handler))
+      .get('/resource1')
+      .query({ role: 'role1' });
+    expect(res.status).toBe(200);
+    expect(res.text).toBe('Hello World!');
+  });
 });

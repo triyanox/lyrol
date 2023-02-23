@@ -37,6 +37,7 @@ const authWrapper = <T extends NextApiRequest>(
 ) => {
   return (req: T, res: NextApiResponse) => {
     (req as any).role = 'role1';
+    (req as any).permissions = role.toObject();
     handler(req, res);
   };
 };

@@ -68,6 +68,7 @@ class NextRoleManager extends AuthManager implements INextRoleManager {
             action: options.action,
             resource: options.resource,
             loose: options.loose,
+            constructRole: true,
           });
         }
         if (authorized) {
