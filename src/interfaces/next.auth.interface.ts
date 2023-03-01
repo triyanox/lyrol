@@ -46,18 +46,18 @@ interface INextRoleManager extends IAuthManager {
    * This function takes some options as first argument and a `NextApiHandler` as second argument
    * @param options The options for authorization
    */
-  authorize: <T extends NextApiRequest>(
+  authorize: <T extends NextApiRequest, U extends NextApiResponse>(
     options: INextAutorizeOptions,
-    handler: (req: T, res: NextApiResponse) => Promise<void> | void
-  ) => (req: T, res: NextApiResponse) => Promise<void> | void;
-  onError?: <T extends NextApiRequest>(
+    handler: (req: T, res: U) => Promise<void> | void
+  ) => (req: T, res: U) => Promise<void> | void;
+  onError?: <T extends NextApiRequest, U extends NextApiResponse>(
     err: AuthError,
     req: T,
-    res: NextApiResponse
+    res: U
   ) => Promise<void> | void;
-  onSucess?: <T extends NextApiRequest>(
+  onSucess?: <T extends NextApiRequest, U extends NextApiResponse>(
     req: T,
-    res: NextApiResponse
+    res: U
   ) => Promise<void> | void;
 }
 
@@ -78,17 +78,17 @@ interface INextRoleManagerOptions {
   /**
    * The function that is called when an error occurs
    */
-  onError?: <T extends NextApiRequest>(
+  onError?: <T extends NextApiRequest, U extends NextApiResponse>(
     err: AuthError,
     req: T,
-    res: NextApiResponse
+    res: U
   ) => Promise<void> | void;
   /**
    * The function that is called when the request is authorized
    */
-  onSucess?: <T extends NextApiRequest>(
+  onSucess?: <T extends NextApiRequest, U extends NextApiResponse>(
     req: T,
-    res: NextApiResponse
+    res: U
   ) => Promise<void> | void;
 }
 

@@ -7,15 +7,15 @@ import {
 } from '../interfaces/index';
 
 class ExpressRoleManager extends AuthManager implements IExpressRoleManager {
-  onError?: <T extends Request>(
+  onError?: <T extends Request, U extends Response = Response>(
     err: AuthError,
     req: T,
-    res: Response,
+    res: U,
     next: NextFunction
   ) => void;
-  onSucess?: <T extends Request>(
+  onSucess?: <T extends Request, U extends Response = Response>(
     req: T,
-    res: Response,
+    res: U,
     next: NextFunction
   ) => void;
 
@@ -41,10 +41,10 @@ class ExpressRoleManager extends AuthManager implements IExpressRoleManager {
     return permissions;
   }
 
-  authorize<T extends Request>(
+  authorize<T extends Request, U extends Response = Response>(
     options: IExpressAutorizeOptions
-  ): (req: T, res: Response, next: NextFunction) => void {
-    return (req: T, res: Response, next: NextFunction) => {
+  ): (req: T, res: U, next: NextFunction) => void {
+    return (req: T, res: U, next: NextFunction) => {
       try {
         let authorized = false;
         if (!options.usePermissionKey) {
@@ -70,7 +70,7 @@ class ExpressRoleManager extends AuthManager implements IExpressRoleManager {
         }
         if (authorized) {
           if (this.onSucess) {
-            this.onSucess<T>(req, res, next);
+            this.onSucess<T, U>(req, res, next);
           } else {
             next();
           }
@@ -79,7 +79,7 @@ class ExpressRoleManager extends AuthManager implements IExpressRoleManager {
         }
       } catch (error: any) {
         if (this.onError) {
-          this.onError<T>(error, req, res, next);
+          this.onError<T, U>(error, req, res, next);
         } else {
           next(error);
         }

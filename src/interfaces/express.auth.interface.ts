@@ -65,24 +65,24 @@ interface IExpressRoleManager extends IAuthManager {
    * ***********************************************************************************************
    * you can use this to add the keys to the `Request` interface
    */
-  authorize: <T extends Request>(
+  authorize: <T extends Request, U extends Response>(
     options: IExpressAutorizeOptions
-  ) => (req: T, res: Response, next: NextFunction) => void;
+  ) => (req: T, res: U, next: NextFunction) => void;
   /**
    * The function that is called when an error occurs
    */
-  onError?: <T extends Request>(
+  onError?: <T extends Request, U extends Response>(
     err: AuthError,
     req: T,
-    res: Response,
+    res: U,
     next: NextFunction
   ) => void;
   /**
    * The function that is called when the authorization is successful
    */
-  onSucess?: <T extends Request>(
+  onSucess?: <T extends Request, U extends Response>(
     req: T,
-    res: Response,
+    res: U,
     next: NextFunction
   ) => void;
 }
@@ -104,18 +104,18 @@ interface IExpressRoleManagerOptions {
   /**
    * The function that is called when an error occurs
    */
-  onError?: <T extends Request>(
+  onError?: <T extends Request, U extends Response>(
     err: AuthError,
     req: T,
-    res: Response,
+    res: U,
     next: NextFunction
   ) => void;
   /**
    * The function that is called when the authorization is successful
    */
-  onSucess?: <T extends Request>(
+  onSucess?: <T extends Request, U extends Response>(
     req: T,
-    res: Response,
+    res: U,
     next: NextFunction
   ) => void;
 }

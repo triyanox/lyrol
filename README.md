@@ -4,7 +4,7 @@
   <img src="logo.svg" alt="log" width="200" />
 </p>
 
-[![Rate this package](https://badges.openbase.com/js/rating/lyrol.svg?style=openbase&token=FjWdZk+GM9XSAbnKGtvMPP4+B452l84xBXsBZnQFHxw=)](https://openbase.com/js/lyrol?utm_source=embedded&amp;utm_medium=badge&amp;utm_campaign=rate-badge)
+[![Rate this package](https://badges.openbase.com/js/rating/lyrol.svg?style=openbase&token=FjWdZk+GM9XSAbnKGtvMPP4+B452l84xBXsBZnQFHxw=)](https://openbase.com/js/lyrol?utm_source=embedded&utm_medium=badge&utm_campaign=rate-badge)
 
 Lyrol is fully featured role management library for node.js. It allows you to easily create roles and manage permissions and authorize your users, and it supports various frameworks like
 `express`, `koa` and `next.js`.
@@ -26,7 +26,6 @@ Lyrol is fully featured role management library for node.js. It allows you to ea
     - [Next.js Middleware](#nextjs-middleware)
   - [LICENSE](#license)
 
-
 ## Installation
 
 You can install lyrol using npm:
@@ -34,6 +33,7 @@ You can install lyrol using npm:
 ```bash
 npm install lyrol
 ```
+
 or yarn:
 
 ```bash
@@ -252,29 +252,29 @@ or
 import { Role } from 'lyrol';
 
 const role = Role.fromObject({
-    user: {
-      create: false,
-      read: false,
-      update: false,
-      delete: false,
-      list: true,
-    },
-    post: { create: true, read: true, update: true, delete: true, list: true },
-    comment: {
-      create: true,
-      read: true,
-      update: true,
-      delete: true,
-      list: true,
-    },
-    page: { create: true, read: true, update: true, delete: true, list: true },
-    picture: {
-      create: false,
-      read: false,
-      update: true,
-      delete: true,
-      list: true,
-    },
+  user: {
+    create: false,
+    read: false,
+    update: false,
+    delete: false,
+    list: true,
+  },
+  post: { create: true, read: true, update: true, delete: true, list: true },
+  comment: {
+    create: true,
+    read: true,
+    update: true,
+    delete: true,
+    list: true,
+  },
+  page: { create: true, read: true, update: true, delete: true, list: true },
+  picture: {
+    create: false,
+    read: false,
+    update: true,
+    delete: true,
+    list: true,
+  },
 });
 
 role.canCreate('user'); // false
@@ -334,6 +334,7 @@ app.listen(3000, () => {
   console.log('Example app listening on port 3000!');
 });
 ```
+
 The `authorize` method takes multiple options as a parameter.
 
 - `resource` - The resource to be accessed. Can be a string or an array of strings.
@@ -426,6 +427,7 @@ app.listen(3000, () => {
   console.log('Example app listening on port 3000!');
 });
 ```
+
 The `authorize` method takes the same options as the `authorize` method of the `ExpressRoleManager` class.
 
 ### Next.js Middleware
@@ -457,14 +459,12 @@ const roleManager = new NextRoleManager({
   },
 });
 
-
-// handles authentification
 const withAuth = (handler: NextApiHandler) => {
-   return (req: NextApiRequest, res: NextApiResponse) => {
+  return (req: NextApiRequest, res: NextApiResponse) => {
     (req as any).role = 'user';
     handler(req, res);
   };
-}
+};
 
 const handler = roleManager.authorize(
   {

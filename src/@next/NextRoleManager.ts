@@ -11,14 +11,20 @@ import {
  * @extends AuthManager
  */
 class NextRoleManager extends AuthManager implements INextRoleManager {
-  onError?: <T extends NextApiRequest>(
+  onError?: <
+    T extends NextApiRequest,
+    U extends NextApiResponse = NextApiResponse
+  >(
     err: AuthError,
     req: T,
-    res: NextApiResponse
+    res: U
   ) => Promise<void> | void;
-  onSucess?: <T extends NextApiRequest>(
+  onSucess?: <
+    T extends NextApiRequest,
+    U extends NextApiResponse = NextApiResponse
+  >(
     req: T,
-    res: NextApiResponse
+    res: U
   ) => Promise<void> | void;
 
   constructor(options: INextRoleManagerOptions) {
@@ -43,11 +49,14 @@ class NextRoleManager extends AuthManager implements INextRoleManager {
     return permissions;
   }
 
-  authorize<T extends NextApiRequest>(
+  authorize<
+    T extends NextApiRequest,
+    U extends NextApiResponse = NextApiResponse
+  >(
     options: INextAutorizeOptions,
-    handler: (req: T, res: NextApiResponse) => Promise<void> | void
-  ): (req: T, res: NextApiResponse) => Promise<void> | void {
-    return (req: T, res: NextApiResponse) => {
+    handler: (req: T, res: U) => Promise<void> | void
+  ): (req: T, res: U) => Promise<void> | void {
+    return (req: T, res: U) => {
       try {
         let authorized = false;
         if (!options.usePermissionKey) {
@@ -73,7 +82,7 @@ class NextRoleManager extends AuthManager implements INextRoleManager {
         }
         if (authorized) {
           if (this.onSucess) {
-            this.onSucess<T>(req, res);
+            this.onSucess<T, U>(req, res);
           } else {
             handler(req, res);
           }
@@ -82,7 +91,7 @@ class NextRoleManager extends AuthManager implements INextRoleManager {
         }
       } catch (err: any) {
         if (this.onError) {
-          this.onError<T>(err, req, res);
+          this.onError<T, U>(err, req, res);
         } else {
           throw err;
         }
