@@ -17,18 +17,22 @@ export default class AuthManager implements IAuthManager {
     this.resources = new Set(options.resources);
   }
 
-  _checkRole(role: string): boolean {
+  private _checkRole(role: string): boolean {
     return this.roles.has(role);
   }
 
-  _checkResource(resource: string | string[]): boolean {
+  private _checkResource(resource: string | string[]): boolean {
     if (Array.isArray(resource)) {
       return resource.every((r) => this.resources.has(r));
     }
     return this.resources.has(resource);
   }
 
-  _getRole(role: string, constructRole?: boolean, permissions?: any): IRole {
+  private _getRole(
+    role: string,
+    constructRole?: boolean,
+    permissions?: any
+  ): IRole {
     try {
       let roleObject: IRole | undefined;
       if (constructRole) {
@@ -48,19 +52,7 @@ export default class AuthManager implements IAuthManager {
     }
   }
 
-  _verifyPermission(
-    role: IRole,
-    action: permission,
-    resource: string
-  ): boolean {
-    try {
-      return role.can(action, resource);
-    } catch (error) {
-      throw AuthError.throw_unknown_error(error);
-    }
-  }
-
-  _verifyPermissionsStrict(
+  private _verifyPermissionsStrict(
     role: IRole,
     actions: permission[],
     resources: string[]
@@ -76,7 +68,7 @@ export default class AuthManager implements IAuthManager {
     }
   }
 
-  _verifyPermissionsLoose(
+  private _verifyPermissionsLoose(
     role: IRole,
     actions: permission[],
     resources: string[]
@@ -116,7 +108,7 @@ export default class AuthManager implements IAuthManager {
     };
   }
 
-  authorizeRole(options: IAutorizeOptions): boolean {
+  public authorizeRole(options: IAutorizeOptions): boolean {
     try {
       const { role, action, resource, constructRole, permissions, loose } =
         this._verifyOptions(options);

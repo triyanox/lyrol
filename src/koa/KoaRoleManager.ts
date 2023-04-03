@@ -20,7 +20,7 @@ class KoaRoleManager extends AuthManager implements IKoaRoleManager {
     this.onSucess = options.onSucess;
   }
 
-  _getRoleFromRequest(ctx: Context, roleKey: string): string {
+  private _getRoleFromRequest(ctx: Context, roleKey: string): string {
     const role = ctx[roleKey as keyof Context];
     if (!role) {
       throw AuthError.throw_error('INVALID_ROLE');
@@ -28,7 +28,10 @@ class KoaRoleManager extends AuthManager implements IKoaRoleManager {
     return role;
   }
 
-  _getPermissionsFromRequest(ctx: Context, permissionsKey: string): any {
+  private _getPermissionsFromRequest(
+    ctx: Context,
+    permissionsKey: string
+  ): any {
     const permissions = ctx[permissionsKey as keyof Context];
     if (!permissions) {
       throw AuthError.throw_error('INVALID_PERMISSIONS');
@@ -36,7 +39,7 @@ class KoaRoleManager extends AuthManager implements IKoaRoleManager {
     return permissions;
   }
 
-  authorize<T extends Context>(
+  public authorize<T extends Context>(
     options: IKoaAutorizeOptions
   ): (ctx: T, next: Next) => Promise<void> | void {
     return async (ctx: T, next: Next) => {

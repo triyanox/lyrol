@@ -1,7 +1,7 @@
-import { AuthError, AuthManager } from './@auth/index';
-import { ExpressRoleManager } from './@express/index';
-import { KoaRoleManager } from './@koa/index';
-import { NextRoleManager } from './@next/index';
+import { AuthError, AuthManager } from './auth/index';
+import { ExpressRoleManager } from './express/index';
+import { KoaRoleManager } from './koa/index';
+import { NextRoleManager } from './next/index';
 import {
   ErrorCodes,
   extendOpts,
