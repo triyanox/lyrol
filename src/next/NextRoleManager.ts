@@ -1,50 +1,65 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextApiRequest, NextApiResponse } from 'next';
 import { AuthError, AuthManager } from '../index';
 import {
-  IExpressAutorizeOptions,
-  IExpressRoleManager,
-  IExpressRoleManagerOptions,
-} from '../interfaces/index';
+  INextAutorizeOptions,
+  INextRoleManager,
+  INextRoleManagerOptions,
+} from '../interfaces';
 
-class ExpressRoleManager extends AuthManager implements IExpressRoleManager {
-  onError?: <T extends Request, U extends Response = Response>(
+/**
+ * The class that is used to manage roles and permissions
+ * @extends AuthManager
+ */
+class NextRoleManager extends AuthManager implements INextRoleManager {
+  onError?: <
+    T extends NextApiRequest,
+    U extends NextApiResponse = NextApiResponse
+  >(
     err: AuthError,
     req: T,
-    res: U,
-    next: NextFunction
-  ) => void;
-  onSucess?: <T extends Request, U extends Response = Response>(
+    res: U
+  ) => Promise<void> | void;
+  onSucess?: <
+    T extends NextApiRequest,
+    U extends NextApiResponse = NextApiResponse
+  >(
     req: T,
-    res: U,
-    next: NextFunction
-  ) => void;
+    res: U
+  ) => Promise<void> | void;
 
-  constructor(options: IExpressRoleManagerOptions) {
+  constructor(options: INextRoleManagerOptions) {
     super(options);
     this.onError = options.onError;
     this.onSucess = options.onSucess;
   }
 
-  _getRoleFromRequest(req: Request, roleKey: string): string {
-    const role = req[roleKey as keyof Request];
+  private _getRoleFromRequest(req: NextApiRequest, roleKey: string): string {
+    const role = req[roleKey as keyof NextApiRequest];
     if (!role) {
       throw AuthError.throw_error('INVALID_ROLE');
     }
     return role;
   }
 
-  _getPermissionsFromRequest(req: Request, permissionsKey: string): any {
-    const permissions = req[permissionsKey as keyof Request];
+  private _getPermissionsFromRequest(
+    req: NextApiRequest,
+    permissionsKey: string
+  ): any {
+    const permissions = req[permissionsKey as keyof NextApiRequest];
     if (!permissions) {
       throw AuthError.throw_error('INVALID_PERMISSIONS');
     }
     return permissions;
   }
 
-  authorize<T extends Request, U extends Response = Response>(
-    options: IExpressAutorizeOptions
-  ): (req: T, res: U, next: NextFunction) => void {
-    return (req: T, res: U, next: NextFunction) => {
+  public authorize<
+    T extends NextApiRequest,
+    U extends NextApiResponse = NextApiResponse
+  >(
+    options: INextAutorizeOptions,
+    handler: (req: T, res: U) => Promise<void> | void
+  ): (req: T, res: U) => Promise<void> | void {
+    return (req: T, res: U) => {
       try {
         let authorized = false;
         if (!options.usePermissionKey) {
@@ -70,22 +85,22 @@ class ExpressRoleManager extends AuthManager implements IExpressRoleManager {
         }
         if (authorized) {
           if (this.onSucess) {
-            this.onSucess<T, U>(req, res, next);
+            this.onSucess<T, U>(req, res);
           } else {
-            next();
+            handler(req, res);
           }
         } else {
           throw AuthError.throw_error('UNAUTHORIZED');
         }
-      } catch (error: any) {
+      } catch (err: any) {
         if (this.onError) {
-          this.onError<T, U>(error, req, res, next);
+          this.onError<T, U>(err, req, res);
         } else {
-          next(error);
+          throw err;
         }
       }
     };
   }
 }
 
-export default ExpressRoleManager;
+export default NextRoleManager;
