@@ -95,7 +95,7 @@ const usePerm = (role?: IRole): usePermType => {
     if (role) {
       setInitialPerm(role);
     }
-  }, [role, setInitialPerm]);
+  }, [role]);
 
   return { permissions, setPerm, getPerm, load: setInitialPerm, generate };
 };
