@@ -27,6 +27,11 @@ import {
   permissions,
   scopes,
 } from './role.interface';
+import {
+  PermissionContextType,
+  usePermType,
+  PermissionProviderProps,
+} from './react.interface';
 
 export type {
   IAuthManager,
@@ -48,4 +53,7 @@ export type {
   INextRoleManager,
   INextRoleManagerOptions,
   INextAutorizeOptions,
+  PermissionContextType,
+  usePermType,
+  PermissionProviderProps,
 };
